@@ -1,5 +1,11 @@
 import { C } from '@angular/cdk/keycodes';
-import { ChangeDetectionStrategy, Component, Renderer2 } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  Renderer2
+} from '@angular/core';
+import { FormControl } from '@angular/forms';
 import moment from 'moment-timezone';
 
 @Component({
@@ -7,4 +13,11 @@ import moment from 'moment-timezone';
   styleUrls: ['./app.component.scss'],
   templateUrl: './app.component.html'
 })
-export class AppComponent {}
+export class AppComponent implements OnInit {
+  public value: any;
+  public formControl: FormControl = new FormControl();
+
+  ngOnInit() {
+    this.formControl.valueChanges.subscribe(console.log);
+  }
+}

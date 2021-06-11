@@ -15,7 +15,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { Observable, Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 import { CalendarComponent } from '../calendar/calendar.component';
-import * as moment from 'moment-timezone';
+import moment from 'moment-timezone';
 import { DatepickerRef } from './datepicker.ref';
 
 @Component({
@@ -50,7 +50,7 @@ export class DatepickerComponent implements ControlValueAccessor, OnDestroy {
     private readonly injector: Injector
   ) {
     this.overlayRef = this.overlay.create(this._getOverlayConfig());
-    const ref = new DatepickerRef(this.overlayRef);
+    this._ref = new DatepickerRef(this.overlayRef);
   }
 
   public onClick(): void {

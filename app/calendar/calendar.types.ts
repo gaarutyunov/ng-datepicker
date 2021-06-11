@@ -1,3 +1,5 @@
+import moment from 'moment-timezone';
+
 export interface CalendarCell {
   date: number;
   moment: moment.Moment;

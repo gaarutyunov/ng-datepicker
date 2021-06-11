@@ -1,5 +1,6 @@
 import { OverlayRef } from '@angular/cdk/overlay';
 import { Observable, Subject } from 'rxjs';
+import moment from 'moment-timezone';
 
 export class DatepickerRef {
   private readonly _afterClosed$: Subject<any> = new Subject();
