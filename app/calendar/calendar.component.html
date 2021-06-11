@@ -1,0 +1,23 @@
+<div class="th--date-picker__header">
+  <button (click)="prevMonth()">p</button>
+  <span>{{month}}</span>
+  <input type="number" [value]="year" (input)="setYear($event.target.value)">
+  <button (click)="nextMonth()">n</button>
+</div>
+
+<table class="th--date-picker__calendar">
+  <thead class="th--date-picker__weekdays">
+    <tr>
+      <th *ngFor="let day of weekdays" class="th--date-picker__weekday">{{day}}</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let row of calendarRows">
+      <td *ngFor="let cell of row" class="th--date-picker__day--selected"
+        [class.th--date-picker__day--today]="cell.today" [class.th--date-picker__day--selected]="cell.selected"
+        [class.th--date-picker__day--notcurrent]="!cell.currentMonth" (click)="select(cell)">
+        {{ cell.date }}
+      </td>
+    </tr>
+  </tbody>
+</table>

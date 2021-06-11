@@ -1,0 +1,13 @@
+@import '~@angular/material/prebuilt-themes/deeppurple-amber.css';
+
+.th--date-picker {
+  &__day {
+    &--selected {
+      border: 1px solid blue;
+    }
+
+    &--today {
+      color: red;
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "apps": [{
+    "styles": [
+      "scss/styles.css",
+      "node_modules/carbon-components/css/carbon-components.css"
+    ],
+    "scripts": [
+      "node_modules/moment/moment.js",
+      "node_modules/moment-timezone/builds/moment-timezone-with-data.min.js",
+    ]
+  }]
+}
