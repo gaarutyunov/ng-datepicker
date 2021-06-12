@@ -1,6 +1,7 @@
 import { Overlay, OverlayConfig, OverlayRef } from '@angular/cdk/overlay';
 import { ComponentPortal } from '@angular/cdk/portal';
 import {
+  AfterViewInit,
   Component,
   ElementRef,
   forwardRef,
@@ -29,8 +30,9 @@ import { DatepickerRef } from './datepicker.ref';
     }
   ]
 })
-export class DatepickerComponent implements ControlValueAccessor, OnDestroy {
-  protected readonly overlayRef: OverlayRef;
+export class DatepickerComponent
+  implements ControlValueAccessor, OnDestroy, AfterViewInit {
+  private overlayRef: OverlayRef;
   private readonly _destroy$: Subject<void> = new Subject<void>();
 
   @ViewChild('input')
@@ -40,7 +42,7 @@ export class DatepickerComponent implements ControlValueAccessor, OnDestroy {
 
   private _opened: boolean = false;
 
-  private readonly _ref: DatepickerRef;
+  private _ref: DatepickerRef;
 
   private _onChange: (val: any) => void = (_: any) => {};
   private _onTouched: () => void = () => {};
@@ -48,7 +50,9 @@ export class DatepickerComponent implements ControlValueAccessor, OnDestroy {
   constructor(
     private readonly overlay: Overlay,
     private readonly injector: Injector
-  ) {
+  ) {}
+
+  ngAfterViewInit(): void {
     this.overlayRef = this.overlay.create(this._getOverlayConfig());
     this._ref = new DatepickerRef(this.overlayRef);
   }
