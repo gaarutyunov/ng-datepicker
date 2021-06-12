@@ -3,17 +3,13 @@ import { ComponentPortal } from '@angular/cdk/portal';
 import {
   AfterViewInit,
   Component,
-  ElementRef,
   forwardRef,
-  HostListener,
-  Inject,
   Injector,
   OnDestroy,
-  Renderer2,
   ViewChild
 } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { Observable, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 import { CalendarComponent } from '../calendar/calendar.component';
 import moment from 'moment-timezone';
@@ -25,7 +21,7 @@ import { DatepickerRef } from './datepicker.ref';
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
-      useFactory: forwardRef(() => DatepickerComponent),
+      useExisting: forwardRef(() => DatepickerComponent),
       multi: true
     }
   ]
@@ -36,7 +32,7 @@ export class DatepickerComponent
   private readonly _destroy$: Subject<void> = new Subject<void>();
 
   @ViewChild('input')
-  private readonly input?: HTMLInputElement;
+  public input?: HTMLInputElement;
 
   public disabled: boolean = false;
 
@@ -45,22 +41,20 @@ export class DatepickerComponent
   private _ref: DatepickerRef;
 
   private _onChange: (val: any) => void = (_: any) => {};
-  private _onTouched: () => void = () => {};
+  public onTouched: () => void = () => {};
+
+  private _date?: moment.Moment;
+  private _portal?: ComponentPortal<CalendarComponent>;
 
   constructor(
     private readonly overlay: Overlay,
     private readonly injector: Injector
   ) {}
 
-  ngAfterViewInit(): void {
+  public ngAfterViewInit(): void {
     this.overlayRef = this.overlay.create(this._getOverlayConfig());
     this._ref = new DatepickerRef(this.overlayRef);
-  }
-
-  public onClick(): void {
-    if (this._opened) return;
-
-    this._opened = true;
+    this._ref.date = this._date;
 
     const injector = Injector.create({
       parent: this.injector,
@@ -72,9 +66,7 @@ export class DatepickerComponent
       ]
     });
 
-    const portal = new ComponentPortal(CalendarComponent, undefined, injector);
-
-    this.overlayRef.attach(portal);
+    this._portal = new ComponentPortal(CalendarComponent, undefined, injector);
 
     this.overlayRef
       .backdropClick()
@@ -93,7 +85,17 @@ export class DatepickerComponent
       if (!!x) {
         this._onChange(x);
       }
+
+      this._hide();
     });
+  }
+
+  public onClick(): void {
+    if (this._opened) return;
+
+    this._opened = true;
+
+    this.overlayRef.attach(this._portal);
   }
 
   private _hide(): void {
@@ -102,21 +104,27 @@ export class DatepickerComponent
     this._opened = false;
   }
 
-  writeValue(obj: moment.MomentInput): void {
-    this._ref.date = obj;
+  public writeValue(obj: moment.MomentInput): void {
+    this._date = moment(obj);
+
+    if (this._ref) {
+      this._ref.date = this._date;
+    }
   }
 
-  registerOnChange(fn: any): void {
+  public registerOnChange(fn: any): void {
     this._onChange = fn;
   }
-  registerOnTouched(fn: any): void {
-    this._onTouched = fn;
+
+  public registerOnTouched(fn: any): void {
+    this.onTouched = fn;
   }
-  setDisabledState?(isDisabled: boolean): void {
+
+  public setDisabledState?(isDisabled: boolean): void {
     this.disabled = isDisabled;
   }
 
-  ngOnDestroy(): void {
+  public ngOnDestroy(): void {
     this._destroy$.next();
     this._destroy$.complete();
   }

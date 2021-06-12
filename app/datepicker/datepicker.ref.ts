@@ -14,6 +14,5 @@ export class DatepickerRef {
   public close(date: moment.Moment): void {
     this.overlayRef.detach();
     this._afterClosed$.next(date);
-    this._afterClosed$.complete();
   }
 }

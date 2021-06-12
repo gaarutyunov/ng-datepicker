@@ -28,23 +28,28 @@ export class CalendarComponent {
   public readonly dateChanged: EventEmitter<moment.Moment> = new EventEmitter();
   public readonly weekdays: string[] = weekdays();
 
-  private _date = moment();
-  private _selectedDate = moment();
+  private _date: moment.Moment;
+  private _selectedDate: moment.Moment;
   public calendarRows: CalendarRow[] = [];
-  public year: number = this._date.year();
+  public year: number;
   public month: string;
+
+  private _ref?: DatepickerRef;
 
   constructor(injector: Injector) {
     try {
-      const ref = injector.get(DatepickerRef);
-      this._date = !!ref?.date ? moment(ref!.date!) : moment();
+      this._ref = injector.get(DatepickerRef);
+      this._date = !!this._ref?.date ? moment(this._ref!.date!) : moment();
+      this._selectedDate = this._date.clone();
     } catch(e) {
-      // do nothing
+      this._date = moment();
+      this._selectedDate = moment();
     }
+
+    this.year = this._date.year();
 
     this._setMonth();
     this._generateCalendar();
-
   }
 
   public prevMonth(): void {
@@ -77,5 +82,10 @@ export class CalendarComponent {
     this._date = this._selectedDate.clone();
     this.dateChanged.emit(this._selectedDate);
     this._generateCalendar();
+
+    if (this._ref) {
+      this._ref.date = this._selectedDate.clone();
+      this._ref.close(this._selectedDate.clone());
+    }
   }
 }
